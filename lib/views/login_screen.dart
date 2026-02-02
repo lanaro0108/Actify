@@ -16,11 +16,17 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Actify',
-              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+            Image.asset(
+              'lib/assets/images/logo.png',
+              height: 120,
             ),
-            const SizedBox(height: 12),
+
+            Text(
+              'Actify',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+
+            const SizedBox(height: 40),
             const Text('Organize seu dia de maneira rápida e fácil'),
             const SizedBox(height: 32),
             TextField(

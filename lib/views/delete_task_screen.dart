@@ -11,20 +11,48 @@ class DeleteTaskScreen extends StatelessWidget {
     final vm = context.watch<TaskViewModel>();
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('Excluir tarefas')),
+      appBar: AppBar(
+        title: const Text('Excluir tarefas'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: AppBackground(
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
+        child: vm.tasks.isEmpty
+            ? const Center(
+          child: Text(
+              "Nada para excluir!",
+              style: TextStyle(color: Colors.white70)
+          ),
+        )
+            : ListView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 100, 16, 16),
           itemCount: vm.tasks.length,
           itemBuilder: (_, i) {
             final task = vm.tasks[i];
-            return Card(
+
+            return Container(
               margin: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
+              ),
               child: ListTile(
-                title: Text(task.title),
+                title: Text(
+                  task.title,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500
+                  ),
+                ),
+                subtitle: Text(
+                  task.description,
+                  style: const TextStyle(color: Colors.white60, fontSize: 12),
+                ),
                 trailing: IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.close, color: Colors.redAccent),
                   onPressed: () => vm.removeTask(task.id!),
                 ),
               ),

@@ -20,27 +20,83 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.microtask(() => context.read<TaskViewModel>().loadTasks());
   }
 
+  Color _getPriorityColor(int priority) {
+    switch (priority) {
+      case 3: return Colors.redAccent;
+      case 2: return Colors.orangeAccent;
+      case 1: return Colors.greenAccent;
+      default: return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TaskViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // 👈 obrigatório
-      appBar: AppBar(title: Text('Bom dia, ${widget.userName}')),
-      body: AppBackground( // 👈 imagem aplicada aqui
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text('Bom dia, ${widget.userName}'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: AppBackground(
+        child: vm.tasks.isEmpty
+            ? const Center(child: Text("Nenhuma tarefa por aqui!", style: TextStyle(color: Colors.white70)))
+            : ListView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 100, 16, 16),
           itemCount: vm.tasks.length,
           itemBuilder: (_, i) {
             final task = vm.tasks[i];
-            return Card(
+
+            return Container(
               margin: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(task.isCompleted ? 0.05 : 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
               child: ListTile(
-                title: Text(task.title),
-                subtitle: Text(task.description),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => vm.removeTask(task.id!),
+                leading: IconButton(
+                  icon: Icon(
+                    task.isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: _getPriorityColor(task.priority),
+                  ),
+                  onPressed: () => vm.toggleTaskStatus(task),
+                ),
+                title: Text(
+                  task.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+                subtitle: Text(
+                  task.description,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      task.priority == 3 ? 'Alta' : task.priority == 2 ? 'Média' : 'Baixa',
+                      style: TextStyle(
+                        color: _getPriorityColor(task.priority),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.white54, size: 20),
+                      onPressed: () => vm.removeTask(task.id!),
+                    ),
+                  ],
                 ),
               ),
             );
